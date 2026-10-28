@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TROCA — Protótipo da Fase 1</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Manrope:wght@400;500;700;800&display=swap">
+<style>
+:root{--bg:#f6f5fb;--glass:rgba(255,255,255,.62);--solid:#fff;--ink:#14162a;--muted:#5d6280;--line:rgba(20,22,42,.13);--gold:#b8861f;--gold2:#7d5612;--goldg:linear-gradient(135deg,#c9972e,#7d5612);--violet:#6a4cff;--cyan:#0aa6c8;--on-gold:#fff;--danger:#c4263b;--shadow:0 24px 50px -24px rgba(40,30,120,.4);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#07080d;--glass:rgba(255,255,255,.045);--solid:#10121d;--ink:#f2f3f8;--muted:#9197ae;--line:rgba(255,255,255,.11);--gold:#e9c46a;--gold2:#fff0bd;--goldg:linear-gradient(135deg,#e9c46a,#fff0bd);--violet:#8b6bff;--cyan:#3be3ff;--on-gold:#1a1405;--danger:#ff7d8d;--shadow:0 24px 60px -24px rgba(0,0,0,.85)}}
+:root[data-theme="dark"]{--bg:#07080d;--glass:rgba(255,255,255,.045);--solid:#10121d;--ink:#f2f3f8;--muted:#9197ae;--line:rgba(255,255,255,.11);--gold:#e9c46a;--gold2:#fff0bd;--goldg:linear-gradient(135deg,#e9c46a,#fff0bd);--violet:#8b6bff;--cyan:#3be3ff;--on-gold:#1a1405;--danger:#ff7d8d;--shadow:0 24px 60px -24px rgba(0,0,0,.85)}
+html{scroll-padding-top:calc(80px + env(safe-area-inset-top,0px));background:var(--bg)}
+html::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:-20%;z-index:-2;filter:blur(12px);animation:drift 24s ease-in-out infinite alternate;background:radial-gradient(40% 35% at 18% 14%,color-mix(in srgb,var(--violet) 38%,transparent),transparent 70%),radial-gradient(35% 30% at 86% 8%,color-mix(in srgb,var(--cyan) 26%,transparent),transparent 70%),radial-gradient(42% 40% at 72% 92%,color-mix(in srgb,var(--gold) 24%,transparent),transparent 70%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;opacity:.55;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse at 50% 0,#000 15%,transparent 72%);mask-image:radial-gradient(ellipse at 50% 0,#000 15%,transparent 72%)}
+.glow{position:fixed;left:0;top:0;width:320px;height:320px;border-radius:50%;pointer-events:none;z-index:0;transform:translate(-999px,-999px);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 6%,transparent),transparent 58%)}
+h1,h2,h3,.logo,.half b,.price,.stats b{font-family:Unbounded,Manrope,sans-serif;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 68%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.03em}
+.logo span{display:inline-block;width:.3em;height:.3em;border-radius:50%;background:var(--goldg);box-shadow:0 0 14px var(--gold);overflow:hidden;color:transparent;margin-left:3px}
+nav{display:flex;gap:4px;margin-left:12px}
+nav button{background:none;border:1px solid transparent;padding:8px 14px;border-radius:99px;color:var(--muted);font-weight:700;transition:color .2s,background .2s}
+nav button:hover{color:var(--ink)}
+nav button[aria-current="page"]{background:var(--glass);border-color:var(--line);color:var(--ink)}
+.sp{flex:1}
+.btn{position:relative;overflow:hidden;border:1px solid var(--line);background:var(--glass);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);padding:10px 18px;border-radius:12px;font-weight:700;transition:transform .2s,border-color .2s}
+.btn:hover{transform:translateY(-2px);border-color:var(--gold)}
+.btn.pri{background:var(--goldg);color:var(--on-gold);border:0;box-shadow:0 10px 30px -10px color-mix(in srgb,var(--gold) 80%,transparent)}
+.btn.pri::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);transform:translateX(-130%)}
+.btn.pri:hover::after{transform:translateX(130%);transition:transform .7s}
+.btn.sm{padding:7px 13px;font-size:14px}
+.btn.dng{border-color:var(--danger);color:var(--danger)}
+.intro{padding:52px 0 8px;display:grid;grid-template-columns:1.1fr .9fr;gap:24px 30px;align-items:center}
+.copy>*{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+.copy>:nth-child(2){animation-delay:.12s}.copy>:nth-child(3){animation-delay:.24s}.copy>:nth-child(4){animation-delay:.36s}
+.intro h1{font-size:clamp(30px,4.8vw,54px);font-weight:700;line-height:1.1;letter-spacing:-.035em;max-width:15ch;background:linear-gradient(100deg,var(--ink) 25%,var(--gold) 45%,var(--ink) 65%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rise .9s both,sheen 8s linear infinite}
+.intro p{color:var(--muted);max-width:46ch;margin:18px 0 0}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.stats{display:flex;gap:30px;flex-wrap:wrap;margin-top:34px}
+.stats b{display:block;font-size:26px;font-weight:600}
+.stats span{color:var(--muted);font-size:13px}
+.stage{position:relative;height:370px}
+.ring{position:absolute;left:50%;top:50%;width:210px;height:210px;margin:-105px 0 0 -105px;border-radius:50%;background:conic-gradient(var(--gold),var(--violet),var(--cyan),var(--gold));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));animation:spin 10s linear infinite;filter:drop-shadow(0 0 18px color-mix(in srgb,var(--violet) 70%,transparent))}
+.ring.go{animation-duration:.7s}
+.core{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;border:1px solid var(--line);background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:48px;color:var(--gold);transition:transform .3s cubic-bezier(.3,1.5,.5,1);box-shadow:inset 0 0 40px color-mix(in srgb,var(--gold) 18%,transparent)}
+.core:hover{transform:scale(1.08) rotate(180deg)}
+.hint{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:13px;color:var(--muted)}
+.fl{position:absolute;translate:0 0;transition:translate .25s ease-out}
+.chip3{display:flex;gap:10px;align-items:center;padding:11px 16px;border-radius:16px;background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:var(--shadow);font-weight:700;font-size:14px;white-space:nowrap;animation:float 6s ease-in-out infinite alternate}
+.chip3 i{color:var(--gold);font-style:normal}
+.fl:nth-of-type(4) .chip3{animation-delay:-2s}.fl:nth-of-type(5) .chip3{animation-delay:-4s}
+.tick{grid-column:1/-1;overflow:hidden;border-block:1px solid var(--line);padding:12px 0;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.tick>div{display:flex;gap:40px;width:max-content;animation:mq 45s linear infinite}
+.tick:hover>div{animation-play-state:paused}
+.tick span{color:var(--muted);font-size:14px;white-space:nowrap}
+.tick em{color:var(--gold);font-style:normal;margin-right:8px}
+.notice{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:10px 14px;max-width:none!important}
+.sec{grid-column:1/-1;font-size:24px;font-weight:600;letter-spacing:-.02em;margin-top:18px!important}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0 14px}
+.filters input[type=search]{flex:1 1 220px}
+input,select,textarea{background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:11px 14px;width:100%;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 20%,transparent)}
+select option{background:var(--solid);color:var(--ink)}
+.filters select,.filters input[type=number]{width:auto}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.chip{border:1px solid var(--line);background:var(--glass);border-radius:99px;padding:7px 16px;font-weight:700;transition:transform .2s,border-color .2s}
+.chip:hover{transform:translateY(-2px);border-color:var(--gold)}
+.chip[aria-pressed="true"]{background:var(--goldg);color:var(--on-gold);border-color:transparent;box-shadow:0 8px 24px -8px color-mix(in srgb,var(--gold) 80%,transparent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;padding-bottom:70px;perspective:1200px}
+.card{position:relative;background:var(--glass);border:1px solid var(--line);border-radius:22px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .25s ease,border-color .25s;animation:rise .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*55ms)}
+.card:hover{border-color:color-mix(in srgb,var(--gold) 65%,transparent)}
+.card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--gold) 22%,transparent),transparent 45%)}
+.card:hover::before{opacity:1}
+.card>*{position:relative}
+.card.off{filter:grayscale(.85) opacity(.6)}
+.swap{display:grid;grid-template-columns:1fr 48px 1fr;align-items:stretch}
+.half{padding:20px 6px 20px 18px}
+.half.want{padding:20px 18px 20px 6px;text-align:right}
+.half small{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+.half b{font-size:14px;font-weight:600;line-height:1.3;display:block}
+.mid{align-self:center;width:42px;height:42px;border-radius:50%;background:var(--goldg);color:var(--on-gold);display:grid;place-items:center;font-weight:800;box-shadow:0 0 24px color-mix(in srgb,var(--gold) 60%,transparent);transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+.card:hover .mid{transform:rotate(180deg) scale(1.12)}
+.meta{padding:12px 18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px;color:var(--muted)}
+.tag{background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold);border-radius:99px;padding:2px 11px;font-weight:700;font-size:12px}
+.price{margin-left:auto;font-size:14px;font-weight:600;color:var(--ink)}
+.acts{display:flex;gap:8px;padding:0 18px 18px}
+.acts .btn{flex:1}
+.fav{flex:0 0 auto!important;width:44px;padding:0!important;font-size:18px}
+.fav[aria-pressed="true"]{color:var(--gold);border-color:var(--gold)}
+.empty{grid-column:1/-1;text-align:center;padding:60px 10px;color:var(--muted)}
+.empty h3{color:var(--ink);font-size:22px;margin-bottom:10px}
+dialog{border:1px solid var(--line);border-radius:24px;background:var(--solid);color:var(--ink);padding:0;width:min(520px,94vw);max-height:92vh;box-shadow:0 40px 90px -30px rgba(0,0,0,.7)}
+dialog[open]{animation:pop .35s cubic-bezier(.2,.9,.3,1.15)}
+dialog::backdrop{background:rgba(5,6,12,.62);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.dlg{padding:24px;display:grid;gap:12px}
+.dlg h2{font-size:21px;font-weight:600;letter-spacing:-.02em}
+.dlg label{display:grid;gap:5px;font-weight:700;font-size:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:var(--danger);font-size:14px;min-height:20px}
+.help{color:var(--muted);font-size:14px;margin:0}
+.chk{display:flex!important;grid-template-columns:none!important;align-items:flex-start;gap:8px;font-weight:400!important}
+.chk input{width:auto;margin-top:4px}
+.end{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--goldg);color:var(--on-gold);padding:11px 20px;border-radius:12px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;max-width:92vw}
+.toast.on{opacity:1}
+.det dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+.det dt{color:var(--muted)}.det dd{margin:0;font-weight:600}
+.safe{background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px}
+@keyframes rise{from{opacity:0;translate:0 26px}to{opacity:1;translate:0 0}}
+@keyframes sheen{to{background-position:-260% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{from{transform:translateY(-8px)}to{transform:translateY(8px)}}
+@keyframes mq{to{transform:translateX(-50%)}}
+@keyframes drift{to{transform:translate(4%,3%) scale(1.08)}}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(14px)}}
+@media (max-width:820px){.intro{grid-template-columns:1fr}.stage{height:310px}}
+@media (max-width:560px){nav{margin-left:0;order:3;width:100%;overflow-x:auto}.row{grid-template-columns:1fr}.fl:nth-of-type(5){display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* espaçamento generoso */
+.wrap{padding:0 32px}.bar{padding:16px 32px;gap:16px}
+.intro{padding:96px 0 40px;gap:48px 56px}
+.intro p{margin-top:26px;line-height:1.75}
+.cta{margin-top:40px;gap:16px}
+.stats{gap:56px;margin-top:56px}
+.stage{height:420px}
+.tick{margin-top:24px;padding:16px 0}
+.notice{padding:14px 20px}
+.sec{margin-top:80px!important;margin-bottom:8px}
+.filters{margin:32px 0 20px;gap:14px}
+.chips{gap:12px;margin-bottom:44px}
+.grid{gap:32px;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));padding-bottom:20px}
+.half{padding:30px 8px 30px 26px}.half.want{padding:30px 26px 30px 8px}
+.meta{padding:18px 26px;gap:10px 14px}
+.acts{padding:0 26px 26px;gap:12px}
+.dlg{padding:36px;gap:20px}
+.card:hover::before{opacity:.7}
+.blk{margin:130px 0}
+/* tema */
+.theme{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:3px;background:var(--glass)}
+.theme button{background:none;border:0;border-radius:99px;padding:5px 13px;font-size:13px;font-weight:700;color:var(--muted)}
+.theme button[aria-pressed="true"]{background:var(--goldg);color:var(--on-gold)}
+.pill{margin-top:24px;border:1px solid var(--line);background:var(--glass);border-radius:99px;padding:9px 18px;font-size:14px;font-weight:700;color:var(--gold)}
+.pill:hover{border-color:var(--gold)}
+/* blocos */
+.sec2{font-size:clamp(26px,3.4vw,38px);font-weight:600;letter-spacing:-.03em;line-height:1.15}
+.lede{color:var(--muted);max-width:54ch;margin:18px 0 36px;line-height:1.75}
+.panel{border:1px solid var(--line);border-radius:30px;padding:clamp(28px,5vw,64px);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:center;box-shadow:var(--shadow)}
+.panel .lede{margin-bottom:32px}
+.bignum b{display:block;font-family:Unbounded,sans-serif;font-size:clamp(56px,9vw,104px);font-weight:700;line-height:1;background:var(--goldg);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bignum span{display:block;color:var(--muted);margin-top:16px}
+.builder{display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:start}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pick.one{grid-template-columns:1fr}
+.opt{text-align:left;padding:18px 20px;border-radius:16px;border:1px solid var(--line);background:var(--glass);font-weight:600;transition:transform .2s,border-color .2s,background .2s}
+.opt:hover:not(:disabled){transform:translateY(-2px);border-color:var(--gold)}
+.opt[aria-pressed="true"]{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.opt:disabled{opacity:.4;cursor:not-allowed}
+.sum{position:sticky;top:110px;border:1px solid var(--line);border-radius:26px;padding:36px;background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);display:grid;gap:20px;box-shadow:var(--shadow)}
+.sum h3,.pbox h3{font-size:18px;font-weight:600}
+.big{font-family:Unbounded,sans-serif;font-size:40px;font-weight:700;color:var(--gold)}
+.big small{font-family:Manrope,sans-serif;font-size:14px;font-weight:500;color:var(--muted);margin-left:8px}
+.old{color:var(--muted);font-size:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sum ul{margin:0;padding-left:20px;display:grid;gap:8px;color:var(--muted);font-size:14px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:26px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:44px 1fr;column-gap:18px;counter-increment:s}
+.steps li::before{content:counter(s);grid-row:span 2;width:44px;height:44px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-family:Unbounded,sans-serif;font-weight:600}
+.steps span{color:var(--muted);font-size:15px}
+.pbox{border:1px solid var(--line);border-radius:24px;padding:36px;background:var(--solid);display:grid;gap:20px}
+.code{font-family:Unbounded,sans-serif;font-size:26px;font-weight:600;letter-spacing:.04em;color:var(--gold);padding:18px 20px;border:1px dashed var(--gold);border-radius:14px;text-align:center}
+.end.l{justify-content:flex-start}
+.bar2{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar2 i{display:block;height:100%;width:var(--w);background:var(--goldg);transition:width .6s}
+.foot{border-top:1px solid var(--line);padding:48px 0 90px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:14px}
+.lnk{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0}
+dialog textarea{resize:vertical}
+@media (max-width:820px){.panel,.builder{grid-template-columns:1fr;gap:36px}.sum{position:static}.pick{grid-template-columns:1fr}.wrap{padding:0 20px}.bar{padding:14px 20px}.blk{margin:90px 0}.intro{padding-top:56px}.stats{gap:32px}}
+/* modo dia: lilás mais presente */
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#efe9ff;--glass:rgba(255,255,255,.72);--line:rgba(88,56,170,.17);--violet:#7a4dff}:root:not([data-theme="dark"]) body::before{filter:blur(4px);opacity:1;background:radial-gradient(50% 44% at 14% 10%,color-mix(in srgb,#9b6bff 66%,transparent),transparent 72%),radial-gradient(42% 38% at 90% 6%,color-mix(in srgb,#ff7ad9 40%,transparent),transparent 72%),radial-gradient(46% 44% at 78% 88%,color-mix(in srgb,#6a4cff 42%,transparent),transparent 72%),radial-gradient(34% 30% at 8% 82%,color-mix(in srgb,#d6a63a 26%,transparent),transparent 72%)}:root:not([data-theme="dark"]) .chip3,:root:not([data-theme="dark"]) .card{box-shadow:0 30px 60px -28px rgba(88,56,200,.5)}}
+:root[data-theme="light"]{--bg:#efe9ff;--glass:rgba(255,255,255,.72);--line:rgba(88,56,170,.17);--violet:#7a4dff}
+:root[data-theme="light"] body::before{filter:blur(4px);opacity:1;background:radial-gradient(50% 44% at 14% 10%,color-mix(in srgb,#9b6bff 66%,transparent),transparent 72%),radial-gradient(42% 38% at 90% 6%,color-mix(in srgb,#ff7ad9 40%,transparent),transparent 72%),radial-gradient(46% 44% at 78% 88%,color-mix(in srgb,#6a4cff 42%,transparent),transparent 72%),radial-gradient(34% 30% at 8% 82%,color-mix(in srgb,#d6a63a 26%,transparent),transparent 72%)}
+:root[data-theme="light"] .chip3,:root[data-theme="light"] .card{box-shadow:0 30px 60px -28px rgba(88,56,200,.5)}
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<header><div class="wrap bar">
+  <div class="logo">troca<span>.</span></div>
+  <nav aria-label="Seções">
+    <button data-v="mural" aria-current="page">Mural</button>
+    <button data-v="salvos">Salvos</button>
+    <button data-v="meus">Meus anúncios</button>
+    <button data-go="combos">Combos</button>
+    <button data-go="partners">Parceiros</button>
+  </nav>
+  <div class="sp"></div>
+  <div class="theme" role="group" aria-label="Tema da página"><button data-t="light" aria-pressed="false">Dia</button><button data-t="dark" aria-pressed="false">Noite</button><button data-t="auto" aria-pressed="true">Auto</button></div>
+  <span id="who" class="help"></span>
+  <button class="btn" id="btnLogin">Entrar</button>
+  <button class="btn pri" id="btnNew">Anunciar</button>
+</div></header>
+
+<main class="wrap">
+  <section class="intro" id="intro">
+  <div class="copy">
+    <h1>Sua assinatura parada vale mais trocada.</h1>
+    <p>Troque convites de plano família, cupons, cursos e jogos com outros alunos da Unifor. Sem custo para trocar.</p>
+    <div class="cta"><button class="btn pri" id="goMural">Explorar trocas</button><button class="btn" id="spinCta">Descobrir uma troca</button></div>
+    <button class="pill" data-go="gift">Novo por aqui? Ganhe 2 meses de 2 assinaturas</button>
+    <div class="stats"><div><b id="n1">0</b><span>anúncios no mural</span></div><div><b id="n2">0</b><span>categorias</span></div><div><b>R$ 0</b><span>para trocar</span></div></div>
+  </div>
+  <div class="stage" id="stage">
+    <div class="ring"></div>
+    <button class="core" id="spinBtn" aria-label="Descobrir uma troca aleatória">⇄</button>
+    <div class="fl" data-d="1.3" style="top:3%;left:0"><div class="chip3">Plano família <i>⇄</i> Spotify</div></div>
+    <div class="fl" data-d="-1" style="top:30%;right:0"><div class="chip3">Curso de inglês <i>⇄</i> Espanhol</div></div>
+    <div class="fl" data-d="1.6" style="bottom:12%;left:6%"><div class="chip3">Editor de vídeo <i>⇄</i> Notion</div></div>
+    <div class="hint">Toque no centro e descubra uma troca</div>
+  </div>
+  <div class="tick"><div id="tk"></div></div>
+  <p class="notice"><b>Protótipo da Fase 1.</b> Anúncios de exemplo, guardados só neste navegador. Para entrar, use qualquer e-mail @edu.unifor.br e o código 123456.</p>
+  <h2 class="sec">Encontre o seu match</h2>
+</section>
+
+  <div class="filters">
+    <input type="search" id="q" placeholder="Buscar por plano ou o que procura" aria-label="Buscar">
+    <select id="tipo" aria-label="Tipo"><option value="">Troca ou venda</option><option value="troca">Só troca</option><option value="venda">Só venda</option></select>
+    <input type="number" id="max" min="0" placeholder="Preço máx. (R$)" aria-label="Preço máximo" style="width:150px">
+    <select id="ord" aria-label="Ordenar"><option value="novo">Mais recentes</option><option value="preco">Menor preço</option></select>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid" aria-live="polite"></div>
+<div id="blocks">
+<section class="blk" id="gift"><div class="panel">
+  <div><h2 class="sec2">Presente de boas-vindas</h2><p class="lede">Novo por aqui? Escolha 2 assinaturas e use cada uma por 2 meses, sem pagar nada.</p><button class="btn pri" id="giftBtn" data-op="gift">Resgatar meu presente</button></div>
+  <div class="bignum"><b>R$ 0</b><span>2 assinaturas, 2 meses cada, à sua escolha</span></div>
+</div></section>
+<section class="blk" id="combos">
+  <h2 class="sec2">Combos de jogos</h2>
+  <p class="lede">Quanto maior o combo, maior o valor, e maior a economia sobre o preço oficial. Escolha o tamanho e monte do seu jeito.</p>
+  <div class="chips" id="tiers"></div>
+  <div class="builder"><div class="pick" id="pick"></div><aside class="sum" id="sum"></aside></div>
+</section>
+<section class="blk" id="partners"><div class="panel">
+  <div><h2 class="sec2">Seja parceiro e ganhe um jogo</h2><p class="lede">Indique o TROCA com seu código. Com as indicações confirmadas, você escolhe 1 jogo da lista do TROCA para baixar e jogar quando e onde quiser.</p>
+  <ol class="steps"><li><b>Gere seu código</b><span>Entre e copie seu código pessoal.</span></li><li><b>Divulgue</b><span>Quem usar seu código no cadastro conta como indicação.</span></li><li><b>Escolha seu jogo</b><span>O dono define a lista. Você escolhe 1 e joga no seu horário.</span></li></ol></div>
+  <div class="pbox" id="pbox"></div>
+</div></section>
+<footer class="foot"><span>© 2026 TROCA. Feito por alunos da Unifor.</span><button class="lnk" data-op="owner">Área do dono</button></footer>
+</div>
+
+</main>
+
+<dialog id="dLogin"><div class="dlg" id="loginBox"></div></dialog>
+<dialog id="dNew"><form class="dlg" id="fNew" novalidate>
+  <h2>Anunciar</h2>
+  <div class="row">
+    <label>Categoria<select name="cat"></select></label>
+    <label>Tipo<select name="tipo"><option value="troca">Troca</option><option value="venda">Venda</option><option value="ambos">Troca ou venda</option></select></label>
+  </div>
+  <label>O que você tem<input name="titulo" maxlength="80" placeholder="Ex.: Convite de plano família"></label>
+  <label>O que você procura<input name="procura" maxlength="80" placeholder="Ex.: Curso de espanhol"></label>
+  <label>Descrição<textarea name="desc" rows="3" maxlength="500" placeholder="Duração, vagas, condições"></textarea></label>
+  <div class="row">
+    <label>Valor estimado (R$)<input name="valor" type="number" min="0" step="0.01"></label>
+    <label>Como entrega<select name="entrega"><option>Convite oficial</option><option>Código ou cupom</option><option>Presencial no campus</option><option>Envio pelo vendedor</option></select></label>
+  </div>
+  <p class="help">Não anuncie compartilhamento de senha nem contas revendidas. Planos família só por convite oficial.</p>
+  <label class="chk"><input type="checkbox" name="termos"> Li e aceito os termos de uso da comunidade.</label>
+  <div class="err" id="eNew"></div>
+  <div class="end"><button type="button" class="btn" data-close>Cancelar</button><button class="btn pri" type="submit">Publicar anúncio</button></div>
+</form></dialog>
+<dialog id="dDet"><div class="dlg det" id="detBox"></div></dialog>
+<dialog id="dGift"><div class="dlg" id="giftBox"></div></dialog>
+<dialog id="dOwner"><div class="dlg" id="ownBox"></div></dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+var CATS=["Streaming","Estudos","Ferramentas","Jogos","Serviços"];
+var ads=[
+{id:1,dono:"Aline M.",cat:"Streaming",titulo:"Plano família 4 telas",procura:"Spotify",tipo:"ambos",valor:30,entrega:"Convite oficial",desc:"Vaga no plano família até dezembro.",wa:"85999990001",st:"ativo",t:8,c:0},
+{id:2,dono:"Pedro S.",cat:"Ferramentas",titulo:"Assistente de escrita Pro",procura:"Notion Pro",tipo:"ambos",valor:25,entrega:"Código ou cupom",desc:"Três meses restantes.",wa:"85999990002",st:"ativo",t:7,c:0},
+{id:3,dono:"Camila R.",cat:"Estudos",titulo:"Curso de inglês avançado",procura:"Curso de espanhol",tipo:"ambos",valor:40,entrega:"Código ou cupom",desc:"Acesso por 6 meses, com certificado.",wa:"85999990003",st:"ativo",t:6,c:0},
+{id:4,dono:"Lucas P.",cat:"Streaming",titulo:"Assinatura de música",procura:"Plano de vídeo",tipo:"troca",valor:20,entrega:"Convite oficial",desc:"Plano duo, uma vaga.",wa:"85999990004",st:"ativo",t:5,c:0},
+{id:5,dono:"Beatriz L.",cat:"Jogos",titulo:"Jogo cooperativo de tabuleiro",procura:"Jogo de cartas",tipo:"ambos",valor:40,entrega:"Presencial no campus",desc:"Completo, jogado duas vezes.",wa:"85999990005",st:"ativo",t:4,c:0},
+{id:6,dono:"Rafael T.",cat:"Jogos",titulo:"Controle USB para PC",procura:"Headset gamer",tipo:"ambos",valor:60,entrega:"Presencial no campus",desc:"Funciona em qualquer PC.",wa:"85999990006",st:"ativo",t:3,c:0},
+{id:7,dono:"Sofia A.",cat:"Serviços",titulo:"Aulas de cálculo 1",procura:"Ajuda com design",tipo:"troca",valor:null,entrega:"Presencial no campus",desc:"Duas horas por semana na biblioteca.",wa:"85999990007",st:"ativo",t:2,c:0},
+{id:8,dono:"Davi N.",cat:"Ferramentas",titulo:"Editor de vídeo (licença estudante)",procura:"Curso de inglês",tipo:"troca",valor:35,entrega:"Código ou cupom",desc:"Licença de 1 ano.",wa:"85999990008",st:"ativo",t:1,c:0}
+];
+var me=null,favs={},view="mural",cat="",nextId=9,loginStep=0,loginEmail="";
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function brl(v){return v==null||v===""?"Sem valor":"R$ "+Number(v).toFixed(2).replace(".",",")}
+function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove("on")},2600)}
+
+function renderChips(){
+  var all=["Todos"].concat(CATS);
+  $("#chips").innerHTML=all.map(function(c){var on=(c==="Todos"&&!cat)||c===cat;return '<button class="chip" data-c="'+(c==="Todos"?"":c)+'" aria-pressed="'+on+'">'+c+'</button>'}).join("");
+}
+function list(){
+  var q=$("#q").value.trim().toLowerCase(),tp=$("#tipo").value,mx=parseFloat($("#max").value),o=$("#ord").value;
+  var r=ads.filter(function(a){
+    if(view==="meus")return me&&a.dono===me.nome&&a.st!=="removido";
+    if(a.st!=="ativo")return false;
+    if(view==="salvos"&&!favs[a.id])return false;
+    if(cat&&a.cat!==cat)return false;
+    if(q&&(a.titulo+" "+a.procura).toLowerCase().indexOf(q)<0)return false;
+    if(tp==="troca"&&a.tipo==="venda")return false;
+    if(tp==="venda"&&a.tipo==="troca")return false;
+    if(!isNaN(mx)&&(a.valor==null||a.valor>mx))return false;
+    return true});
+  r.sort(function(a,b){return o==="preco"?(a.valor==null?1e9:a.valor)-(b.valor==null?1e9:b.valor):b.t-a.t});
+  return r;
+}
+function card(a){
+  var mine=me&&a.dono===me.nome,off=a.st!=="ativo";
+  var tipoTxt={troca:"Troca",venda:"Venda",ambos:"Troca ou venda"}[a.tipo];
+  var actions=view==="meus"
+    ? '<button class="btn sm" data-a="pause" data-id="'+a.id+'">'+(a.st==="pausado"?"Reativar":"Pausar")+'</button><button class="btn sm" data-a="done" data-id="'+a.id+'">Marcar como trocado</button><button class="btn sm dng" data-a="del" data-id="'+a.id+'">Excluir</button>'
+    : '<button class="btn sm" data-a="open" data-id="'+a.id+'">Ver anúncio</button><button class="btn sm fav" data-a="fav" data-id="'+a.id+'" aria-label="Salvar anúncio" aria-pressed="'+!!favs[a.id]+'">'+(favs[a.id]?"♥":"♡")+'</button>';
+  return '<article class="card'+(off?' off':'')+'"><div class="swap"><div class="half"><small>Tenho</small><b>'+esc(a.titulo)+'</b></div><div class="mid" aria-hidden="true">⇄</div><div class="half want"><small>Procuro</small><b>'+esc(a.procura||"Aceito propostas")+'</b></div></div>'+
+  '<div class="meta"><span class="tag">'+esc(a.cat)+'</span><span>'+tipoTxt+'</span>'+(off?'<span class="tag">'+esc(a.st)+'</span>':'')+'<span class="price">'+brl(a.valor)+'</span></div><div class="acts">'+actions+'</div></article>';
+}
+function render(){
+  renderChips();
+  if(window.rBlocks){rBlocks();$("#blocks").style.display=view==="mural"?"":"none"}
+  $("#intro").style.display=view==="mural"?"":"none";
+  document.querySelectorAll("nav button").forEach(function(b){b.toggleAttribute("aria-current",b.dataset.v===view);if(b.dataset.v===view)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+  var r=list(),g=$("#grid");
+  if(view==="meus"&&!me){g.innerHTML='<div class="empty"><h3>Entre para ver seus anúncios</h3><p>Use seu e-mail @edu.unifor.br.</p></div>';return}
+  if(!r.length){
+    var m={mural:["Nenhum anúncio com esses filtros","Limpe a busca ou publique o primeiro anúncio dessa categoria."],salvos:["Você ainda não salvou nada","Toque no coração de um anúncio para guardar aqui."],meus:["Você ainda não anunciou","Publique o que você não usa e diga o que procura."]}[view];
+    g.innerHTML='<div class="empty"><h3>'+m[0]+'</h3><p>'+m[1]+'</p></div>';return}
+  g.innerHTML=r.map(card).join("");
+  Array.prototype.forEach.call(g.children,function(c,i){c.style.setProperty("--i",Math.min(i,12))});
+  $("#who").textContent=me?me.nome:"";
+  $("#btnLogin").textContent=me?"Sair":"Entrar";
+}
+
+/* login: e-mail -> código -> perfil */
+function loginUI(err){
+  var b=$("#loginBox");
+  if(loginStep===0)b.innerHTML='<h2>Entrar com e-mail Unifor</h2><p class="help">Só alunos com e-mail @edu.unifor.br entram na comunidade.</p><label>E-mail institucional<input id="lEmail" type="email" placeholder="matricula@edu.unifor.br" value="'+esc(loginEmail)+'"></label><div class="err">'+(err||"")+'</div><div class="end"><button class="btn" data-close>Cancelar</button><button class="btn pri" data-l="1">Enviar código</button></div>';
+  if(loginStep===1)b.innerHTML='<h2>Digite o código</h2><p class="help">Enviamos um código de 6 dígitos para '+esc(loginEmail)+'. No protótipo, use 123456.</p><label>Código<input id="lCode" inputmode="numeric" maxlength="6"></label><div class="err">'+(err||"")+'</div><div class="end"><button class="btn" data-l="0">Voltar</button><button class="btn pri" data-l="2">Confirmar</button></div>';
+  if(loginStep===2)b.innerHTML='<h2>Complete seu perfil</h2><p class="help">Precisamos disso antes de você anunciar.</p><label>Nome<input id="pNome" maxlength="40"></label><div class="row"><label>Curso<input id="pCurso"></label><label>Semestre<input id="pSem" type="number" min="1" max="12"></label></div><label>WhatsApp com DDD<input id="pWa" inputmode="tel" placeholder="85999999999"></label><label>Código de indicação (opcional)<input id="pRef" maxlength="14"></label><div class="err">'+(err||"")+'</div><div class="end"><button class="btn pri" data-l="3">Entrar no mural</button></div>';
+}
+function openLogin(){loginStep=0;loginUI();$("#dLogin").showModal()}
+document.addEventListener("click",function(e){
+  var t=e.target.closest("button");if(!t)return;
+  if(t.hasAttribute("data-close")){t.closest("dialog").close();return}
+  if(t.dataset.l){
+    var s=t.dataset.l;
+    if(s==="0"){loginStep=0;loginUI()}
+    if(s==="1"){var em=$("#lEmail").value.trim().toLowerCase();loginEmail=em;
+      if(!/^[^@\s]+@edu\.unifor\.br$/.test(em))return loginUI("Use um e-mail que termine em @edu.unifor.br.");
+      loginStep=1;loginUI()}
+    if(s==="2"){if($("#lCode").value!=="123456")return loginUI("Código incorreto. Tente 123456.");loginStep=2;loginUI()}
+    if(s==="3"){var n=$("#pNome").value.trim(),w=$("#pWa").value.replace(/\D/g,""),sm=$("#pSem").value;
+      if(n.length<2)return loginUI("Informe seu nome.");
+      if(w.length<10||w.length>11)return loginUI("WhatsApp precisa ter DDD e 10 ou 11 dígitos.");
+      if(!$("#pCurso").value.trim()||!sm)return loginUI("Informe curso e semestre.");
+      me={nome:n,curso:$("#pCurso").value.trim(),sem:sm,wa:w,ref:($("#pRef").value||"").trim().toUpperCase()};$("#dLogin").close();toast(me.ref?"Bem-vindo, "+n+"! Código "+me.ref+" aplicado.":"Bem-vindo, "+n+"!");render();setTimeout(function(){if(!me.gift)openGift()},700)}
+    return}
+  var v=t.dataset.v;if(v){view=v;render();return}
+  if(t.dataset.c!==undefined&&t.classList.contains("chip")){cat=t.dataset.c;render();return}
+  var a=t.dataset.a,id=+t.dataset.id,ad=ads.filter(function(x){return x.id===id})[0];
+  if(a==="fav"){if(!me){openLogin();return}favs[id]=!favs[id];if(!favs[id])delete favs[id];render()}
+  if(a==="open")openDet(ad);
+  if(a==="pause"){ad.st=ad.st==="pausado"?"ativo":"pausado";toast(ad.st==="ativo"?"Anúncio reativado":"Anúncio pausado");render()}
+  if(a==="done"){ad.st="concluido";toast("Marcado como trocado. Saiu do mural.");render()}
+  if(a==="del"){ad.st="removido";toast("Anúncio excluído");render()}
+  if(a==="zap"){ad.c++;window.open("https://wa.me/55"+ad.wa+"?text="+encodeURIComponent("Oi! Vi seu anúncio \""+ad.titulo+"\" na TROCA e tenho interesse."),"_blank","noopener");toast("Contato registrado")}
+  if(a==="rep"){$("#dDet").close();toast("Denúncia enviada para a moderação")}
+});
+function openDet(a){
+  var cta=me?'<button class="btn pri" data-a="zap" data-id="'+a.id+'">Chamar no WhatsApp</button>':'<button class="btn pri" id="needLogin">Entre para ver o contato</button>';
+  $("#detBox").innerHTML='<h2>'+esc(a.titulo)+'</h2><dl><dt>Categoria</dt><dd>'+esc(a.cat)+'</dd><dt>Procura</dt><dd>'+esc(a.procura||"Aceita propostas")+'</dd><dt>Valor</dt><dd>'+brl(a.valor)+'</dd><dt>Entrega</dt><dd>'+esc(a.entrega)+'</dd><dt>Anunciante</dt><dd>'+esc(a.dono)+'</dd></dl><p>'+esc(a.desc)+'</p><div class="safe">Combine os detalhes antes de trocar e prefira encontros no campus. Nunca compartilhe senhas.</div><div class="end"><button class="btn dng sm" data-a="rep" data-id="'+a.id+'">Denunciar</button><button class="btn" data-close>Fechar</button>'+cta+'</div>';
+  $("#dDet").showModal();
+  var n=$("#needLogin");if(n)n.onclick=function(){$("#dDet").close();openLogin()};
+}
+/* novo anúncio */
+$("#fNew").elements.cat.innerHTML=CATS.map(function(c){return "<option>"+c+"</option>"}).join("");
+$("#btnNew").onclick=function(){if(!me){openLogin();return}$("#eNew").textContent="";$("#dNew").showModal()};
+$("#fNew").onsubmit=function(e){
+  e.preventDefault();var f=e.target.elements,err=$("#eNew"),v=f.valor.value;
+  var active=ads.filter(function(a){return a.dono===me.nome&&(a.st==="ativo"||a.st==="pausado")}).length;
+  if(f.titulo.value.trim().length<3)return err.textContent="O título precisa ter pelo menos 3 caracteres.";
+  if(f.tipo.value!=="troca"&&!v)return err.textContent="Informe o valor estimado para venda.";
+  if(!f.procura.value.trim()&&f.tipo.value==="troca")return err.textContent="Diga o que você procura em troca.";
+  if(!f.termos.checked)return err.textContent="Aceite os termos para publicar.";
+  if(active>=5)return err.textContent="Você já tem 5 anúncios ativos. Conclua ou exclua um antes.";
+  ads.push({id:nextId++,dono:me.nome,cat:f.cat.value,titulo:f.titulo.value.trim(),procura:f.procura.value.trim(),tipo:f.tipo.value,valor:v?+v:null,entrega:f.entrega.value,desc:f.desc.value.trim(),wa:me.wa,st:"ativo",t:Date.now(),c:0});
+  e.target.reset();$("#dNew").close();view="meus";toast("Anúncio publicado");render();
+};
+$("#btnLogin").onclick=function(){if(me){me=null;view="mural";toast("Você saiu");render()}else openLogin()};
+["q","tipo","max","ord"].forEach(function(i){$("#"+i).addEventListener("input",render)});
+(function(){
+var rm=matchMedia("(prefers-reduced-motion:reduce)").matches,gl=document.querySelector(".glow"),st=$("#stage");
+addEventListener("pointermove",function(e){
+  gl.style.transform="translate("+(e.clientX-160)+"px,"+(e.clientY-160)+"px)";
+  if(rm||!st)return;
+  var r=st.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)/r.width,y=(e.clientY-r.top-r.height/2)/r.height;
+  st.querySelectorAll(".fl").forEach(function(f){var d=+f.dataset.d;f.style.translate=(x*d*60)+"px "+(y*d*60)+"px"});
+});
+var g=$("#grid");
+g.addEventListener("pointermove",function(e){
+  var c=e.target.closest(".card");if(!c)return;
+  var r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+  c.style.setProperty("--mx",x+"px");c.style.setProperty("--my",y+"px");
+  if(!rm)c.style.transform="rotateX("+((y/r.height-.5)*-7)+"deg) rotateY("+((x/r.width-.5)*7)+"deg)";
+});
+g.addEventListener("pointerout",function(e){var c=e.target.closest(".card");if(c&&!c.contains(e.relatedTarget))c.style.transform=""});
+function count(el,to){if(rm){el.textContent=to;return}var t0=performance.now();(function f(t){var p=Math.min(1,(t-t0)/1300);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)})(t0)}
+count($("#n1"),ads.length);count($("#n2"),CATS.length);
+var items=["Aline trocou Canva Pro por Duolingo Plus","Pedro anunciou ChatGPT Plus em Ferramentas","Camila trocou plano família por assinatura de música","Novo anúncio: editor de vídeo por curso de inglês","Davi propôs licença de editor por curso de inglês"];
+var h=items.map(function(i){return "<span><em>✦</em>"+i+"</span>"}).join("");$("#tk").innerHTML=h+h;
+$("#spinBtn").onclick=function(){
+  var rg=document.querySelector(".ring");rg.classList.add("go");
+  setTimeout(function(){rg.classList.remove("go");var a=ads.filter(function(x){return x.st==="ativo"});openDet(a[Math.floor(Math.random()*a.length)])},rm?0:900)};
+$("#spinCta").onclick=function(){$("#spinBtn").click()};
+$("#goMural").onclick=function(){document.querySelector(".filters").scrollIntoView({behavior:rm?"auto":"smooth"})};
+})();
+(function(){
+var rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+var cfg={wa:"5585999990000",pin:"1234",need:1,
+ cat:["Plano de jogos para PC","Plano de jogos para console A","Plano de jogos para console B","Jogos na nuvem","Plano de jogos mobile","Catálogo de jogos indie","Pacote de expansões","Plano de jogos de corrida"],
+ rw:["Jogo de aventura","Jogo de corrida","Jogo cooperativo","Jogo de estratégia","Jogo de puzzle"],
+ tiers:[{n:4,of:120,pr:79},{n:5,of:150,pr:95},{n:6,of:180,pr:109},{n:7,of:210,pr:122},{n:8,of:240,pr:134}]};
+var tier=4,pick=[],gp=[],ownerOk=false;
+function T(){return cfg.tiers.filter(function(x){return x.n===tier})[0]||cfg.tiers[0]}
+function setTheme(t){var r=document.documentElement;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t);
+ document.querySelectorAll(".theme button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.t===t)});
+ try{localStorage.setItem("troca-theme",t)}catch(e){}}
+var th="auto";try{th=localStorage.getItem("troca-theme")||"auto"}catch(e){}setTheme(th);
+function rCombo(){
+ var t=T(),left=t.n-pick.length,save=Math.round((t.of-t.pr)/t.of*100);
+ $("#tiers").innerHTML=cfg.tiers.map(function(x){return '<button class="chip" data-op="tier" data-n="'+x.n+'" aria-pressed="'+(x.n===t.n)+'">'+x.n+' itens · '+brl(x.pr)+'</button>'}).join("");
+ $("#pick").innerHTML=cfg.cat.map(function(c,i){var on=pick.indexOf(i)>=0;return '<button class="opt" data-op="pk" data-i="'+i+'" aria-pressed="'+on+'"'+(left<=0&&!on?' disabled':'')+'>'+esc(c)+'</button>'}).join("");
+ $("#sum").innerHTML='<h3>Combo de '+t.n+' itens</h3><div class="big">'+brl(t.pr)+'<small>por mês</small></div><div class="old">Preço oficial somado: <s>'+brl(t.of)+'</s> <span class="tag">Economia de '+save+'%</span></div><p class="help">'+(left>0?'Escolha mais '+left+(left>1?' itens.':' item.'):'Combo completo!')+'</p><ul>'+pick.map(function(i){return '<li>'+esc(cfg.cat[i])+'</li>'}).join("")+'</ul><button class="btn pri" data-op="order"'+(left>0?' disabled':'')+'>Pedir este combo</button><p class="help">Valores de exemplo. O dono define os preços reais na área do dono.</p>';
+}
+function openGift(){
+ if(!me){openLogin();return}
+ if(me.gift){$("#giftBox").innerHTML='<h2>Presente resgatado</h2><p class="help">Você escolheu '+me.gift.map(function(i){return esc(cfg.cat[i])}).join(" e ")+', por 2 meses cada. O dono entra em contato pelo seu WhatsApp para entregar.</p><div class="end"><button class="btn pri" data-close>Fechar</button></div>'}
+ else{gp=[];gRender()}
+ $("#dGift").showModal();
+}
+function gRender(){
+ $("#giftBox").innerHTML='<h2>Escolha 2 assinaturas grátis</h2><p class="help">Cada uma vale 2 meses. Presente de boas-vindas, uma vez por aluno.</p><div class="pick one">'+cfg.cat.map(function(c,i){var on=gp.indexOf(i)>=0;return '<button class="opt" data-op="gp" data-i="'+i+'" aria-pressed="'+on+'"'+(gp.length>=2&&!on?' disabled':'')+'>'+esc(c)+'</button>'}).join("")+'</div><div class="end"><button class="btn" data-close>Depois</button><button class="btn pri" data-op="gok"'+(gp.length<2?' disabled':'')+'>Resgatar presente</button></div>';
+}
+function rPart(){
+ var b=$("#pbox");
+ if(!me){b.innerHTML='<h3>Vire parceiro</h3><p class="help">Entre para gerar seu código de indicação.</p><button class="btn pri" data-op="plogin">Entrar</button>';return}
+ if(!me.code)me.code=(me.nome.split(" ")[0].toUpperCase().replace(/[^A-Z]/g,"").slice(0,6)||"TROCA")+"-"+Math.random().toString(36).slice(2,5).toUpperCase();
+ me.refs=me.refs||0;
+ var ok=me.refs>=cfg.need,w=Math.min(100,me.refs/cfg.need*100);
+ b.innerHTML='<h3>Seu código de parceiro</h3><div class="code">'+esc(me.code)+'</div><div class="end l"><button class="btn sm" data-op="copy">Copiar código</button><button class="btn sm" data-op="sim">Simular indicação (demo)</button></div><p class="help">Indicações confirmadas: '+me.refs+' de '+cfg.need+'</p><div class="bar2"><i style="--w:'+w+'%"></i></div>'+
+ (me.reward?'<p><b>Seu jogo: '+esc(cfg.rw[me.reward-1])+'</b></p><p class="help">Você receberá o código para baixar e jogar quando e onde quiser.</p>':
+ ok?'<p class="help">Desbloqueado! Escolha 1 jogo:</p><div class="pick one">'+cfg.rw.map(function(r,i){return '<button class="opt" data-op="rw" data-i="'+(i+1)+'">'+esc(r)+'</button>'}).join("")+'</div>':'<p class="help">Falta '+(cfg.need-me.refs)+' indicação para liberar seu jogo grátis.</p>');
+}
+window.rBlocks=function(){rCombo();rPart();var b=$("#giftBtn");if(b)b.textContent=me&&me.gift?"Ver meu presente":"Resgatar meu presente"};
+window.openGift=openGift;
+function openOwner(){
+ if(!ownerOk)$("#ownBox").innerHTML='<h2>Área do dono</h2><p class="help">Digite o PIN. No protótipo, o PIN é 1234.</p><label>PIN<input id="oPin" type="password" inputmode="numeric"></label><div class="err" id="oErr"></div><div class="end"><button class="btn" data-close>Cancelar</button><button class="btn pri" data-op="opin">Entrar</button></div>';
+ else oForm();
+ $("#dOwner").showModal();
+}
+function oForm(){
+ $("#ownBox").innerHTML='<h2>Área do dono</h2><label>WhatsApp que recebe os pedidos (com 55 e DDD)<input id="oWa" value="'+esc(cfg.wa)+'"></label><label>Itens do catálogo, um por linha<textarea id="oCat" rows="6">'+esc(cfg.cat.join("\n"))+'</textarea></label><label>Jogos de recompensa para parceiros, um por linha<textarea id="oRw" rows="4">'+esc(cfg.rw.join("\n"))+'</textarea></label><label>Indicações para liberar o jogo<input id="oNeed" type="number" min="1" value="'+cfg.need+'"></label><p class="help">Combos: preço oficial somado e preço TROCA para cada tamanho.</p>'+cfg.tiers.map(function(x,i){return '<div class="row"><label>'+x.n+' itens, oficial (R$)<input data-ti="'+i+'" data-k="of" type="number" min="0" value="'+x.of+'"></label><label>Preço TROCA (R$)<input data-ti="'+i+'" data-k="pr" type="number" min="0" value="'+x.pr+'"></label></div>'}).join("")+'<div class="end"><button class="btn" data-op="oadd">Adicionar combo de '+(cfg.tiers[cfg.tiers.length-1].n+1)+' itens</button><button class="btn pri" data-op="osave">Salvar</button></div>';
+}
+function lines(id){return $(id).value.split("\n").map(function(s){return s.trim()}).filter(Boolean)}
+function readO(){
+ var wa=$("#oWa").value.replace(/\D/g,""),cat=lines("#oCat"),rw=lines("#oRw"),nd=Math.max(1,+$("#oNeed").value||1);
+ var tr=cfg.tiers.map(function(x){return {n:x.n,of:x.of,pr:x.pr}});
+ document.querySelectorAll("[data-ti]").forEach(function(i){tr[+i.dataset.ti][i.dataset.k]=+i.value||0});
+ if(wa.length<12){toast("Informe o WhatsApp com 55 e DDD.");return false}
+ if(cat.length<tr[tr.length-1].n){toast("O catálogo precisa de pelo menos "+tr[tr.length-1].n+" itens.");return false}
+ if(!rw.length){toast("Inclua ao menos 1 jogo de recompensa.");return false}
+ for(var k=0;k<tr.length;k++){if(!(tr[k].pr>0&&tr[k].pr<tr[k].of)){toast("No combo de "+tr[k].n+" itens, o preço TROCA precisa ser menor que o oficial.");return false}}
+ cfg.wa=wa;cfg.cat=cat;cfg.rw=rw;cfg.need=nd;cfg.tiers=tr;return true;
+}
+document.addEventListener("click",function(e){
+ var go=e.target.closest("[data-go]");
+ if(go){view="mural";render();var el=document.getElementById(go.dataset.go);if(el)el.scrollIntoView({behavior:rm?"auto":"smooth",block:"start"});return}
+ var tb=e.target.closest(".theme button");if(tb){setTheme(tb.dataset.t);return}
+ var t=e.target.closest("[data-op]");if(!t)return;
+ var o=t.dataset.op,i=+t.dataset.i,ti=T(),k;
+ if(o==="tier"){tier=+t.dataset.n;pick=pick.slice(0,tier);rCombo()}
+ else if(o==="pk"){k=pick.indexOf(i);if(k>=0)pick.splice(k,1);else if(pick.length<ti.n)pick.push(i);rCombo()}
+ else if(o==="order"){if(!me){openLogin();return}window.open("https://wa.me/"+cfg.wa+"?text="+encodeURIComponent("Oi! Quero o combo de "+ti.n+" itens ("+brl(ti.pr)+" por mês): "+pick.map(function(x){return cfg.cat[x]}).join(", ")),"_blank","noopener");toast("Pedido aberto no WhatsApp")}
+ else if(o==="gift")openGift();
+ else if(o==="gp"){k=gp.indexOf(i);if(k>=0)gp.splice(k,1);else if(gp.length<2)gp.push(i);gRender()}
+ else if(o==="gok"){me.gift=gp.slice();$("#dGift").close();toast("Presente resgatado!");rBlocks()}
+ else if(o==="plogin")openLogin();
+ else if(o==="copy"){try{navigator.clipboard.writeText(me.code).then(function(){toast("Código copiado")},function(){toast("Seu código: "+me.code)})}catch(x){toast("Seu código: "+me.code)}}
+ else if(o==="sim"){me.refs++;rPart()}
+ else if(o==="rw"){me.reward=i;rPart();toast("Jogo escolhido!")}
+ else if(o==="owner")openOwner();
+ else if(o==="opin"){if($("#oPin").value===cfg.pin){ownerOk=true;oForm()}else $("#oErr").textContent="PIN incorreto."}
+ else if(o==="oadd"){if(readO()){var l=cfg.tiers[cfg.tiers.length-1];cfg.tiers.push({n:l.n+1,of:l.of+30,pr:l.pr+13});oForm()}}
+ else if(o==="osave"){if(readO()){$("#dOwner").close();pick=[];gp=[];toast("Alterações salvas");rBlocks()}}
+});
+})();
+render();
+</script>
+</body>
+</html>
